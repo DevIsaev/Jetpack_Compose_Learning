@@ -33,7 +33,10 @@ class MainActivity : ComponentActivity() {
             FourthProjectTheme {
 //                lazycolumnExample()
 //                lazyrowExample()
-                lazyrowPeople()
+                Column(Modifier.padding(15.dp)) {
+                    lazyrowPeople()
+                    lazycolumnPeople()
+                }
             }
         }
     }
@@ -89,6 +92,21 @@ class MainActivity : ComponentActivity() {
                 Human(R.drawable.p45353466,"item5"),
                 Human(R.drawable.p87767556577,"item6"),)){
                 _,i-> itemCard(i)
+            }
+        }
+    }
+
+    @Composable
+    fun lazycolumnPeople(){
+        LazyColumn(modifier = Modifier.fillMaxWidth().padding(vertical = 50.dp).background(Color.Gray)) {
+            itemsIndexed(listOf(
+                Human2(R.drawable.p6754,"item1","teirgiergiergmergmimigme1r2wgefwergserewrgrherhthbetnthbdfrgsrt"),
+                Human2(R.drawable.p676r6,"item2","teirgiergiergmergmimigme1r2wgefwergserewrgrherhthbetnthbdfrgsrt"),
+                Human2(R.drawable.p78575,"item3","teirgiergiergmergmimigme1r2wgefwergserewrgrherhthbetnthbdfrgsrt"),
+                Human2(R.drawable.p8775675,"item4","teirgiergiergmergmimigme1r2wgefwergserewrgrherhthbetnthbdfrgsrt"),
+                Human2(R.drawable.p45353466,"item5","teirgiergiergmergmimigme1r2wgefwergserewrgrherhthbetnthbdfrgsrt"),
+                Human2(R.drawable.p87767556577,"item6","teirgiergiergmergmimigme1r2wgefwergserewrgrherhthbetnthbdfrgsrt"),)){
+                    _,i-> itemCard2(i)
             }
         }
     }
