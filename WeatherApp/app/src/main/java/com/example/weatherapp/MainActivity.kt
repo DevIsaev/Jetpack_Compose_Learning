@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -22,6 +24,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.weatherapp.ui.theme.WeatherAppTheme
@@ -29,6 +33,7 @@ import kotlinx.serialization.Contextual
 import com.android.volley.Request
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
+import com.example.weatherapp.screen.MainScreen
 import org.json.JSONObject
 const val apiKEY="5b97c6dd45614d44b00152855250508"
 
@@ -38,13 +43,16 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             WeatherAppTheme {
-                resultText("Novosibirsk",this@MainActivity)
-//                resultText("London",this@MainActivity)
-//                resultText("Tokio",this@MainActivity)
+                MainScreen()
+                //resultText("Novosibirsk",this@MainActivity)
+                //resultText("London",this@MainActivity)
+                //resultText("Tokio",this@MainActivity)
             }
         }
     }
 
+
+    //первая функция- обычный дизайн
     @Composable
     fun resultText(city: String,context: Context){
         var state= remember { mutableStateOf("unknown") }
@@ -83,5 +91,7 @@ class MainActivity : ComponentActivity() {
         })
         queue.add(sR)
     }
+
+    //продвинутый дизайн
 }
 
