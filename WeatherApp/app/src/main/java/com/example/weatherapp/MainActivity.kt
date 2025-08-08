@@ -23,6 +23,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -33,7 +34,8 @@ import kotlinx.serialization.Contextual
 import com.android.volley.Request
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
-import com.example.weatherapp.screen.MainScreen
+import com.example.weatherapp.screen.MainCard
+import com.example.weatherapp.screen.tabLayout
 import org.json.JSONObject
 const val apiKEY="5b97c6dd45614d44b00152855250508"
 
@@ -43,7 +45,16 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             WeatherAppTheme {
-                MainScreen()
+                Image(
+                    painter = painterResource(R.drawable.p2416),
+                    contentDescription = "",
+                    contentScale = ContentScale.FillBounds,
+                    modifier = Modifier.fillMaxSize().alpha(0.6f)
+                )
+                Column(Modifier.padding(top = 25.dp)) {
+                    MainCard()
+                    tabLayout()
+                }
                 //resultText("Novosibirsk",this@MainActivity)
                 //resultText("London",this@MainActivity)
                 //resultText("Tokio",this@MainActivity)

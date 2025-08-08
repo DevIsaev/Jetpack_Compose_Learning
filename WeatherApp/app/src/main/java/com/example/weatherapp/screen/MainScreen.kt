@@ -10,17 +10,27 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
+import androidx.compose.material3.TabRowDefaults
+import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -32,21 +42,16 @@ import androidx.compose.ui.unit.sp
 import com.example.weatherapp.R
 import com.example.weatherapp.ui.theme.blueLight
 import coil.compose.AsyncImage
+import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 
-@Preview(showBackground = true)
+@Preview(showBackground = false)
 @Composable
-fun MainScreen() {
+fun MainCard() {
     val currentDateTime = LocalDateTime.now()
-    Image(
-        painter = painterResource(R.drawable.p2416),
-        contentDescription = "",
-        contentScale = ContentScale.FillBounds,
-        modifier = Modifier.fillMaxSize().alpha(0.6f)
-    )
-    Column(Modifier.fillMaxSize().padding(15.dp)) {
+    Column(Modifier.padding(15.dp)) {
         Card(
             modifier = Modifier.fillMaxWidth(),
             colors = CardDefaults.cardColors(containerColor = blueLight),
@@ -105,3 +110,48 @@ fun MainScreen() {
         }
     }
 }
+
+@Preview(showBackground = false)
+@Composable
+fun tabLayout(){
+    //список с названиями
+    var tabList=listOf("HOURS","DAYS")
+    var pagerState = rememberPagerState { tabList.size }
+    var tabIndex=pagerState.currentPage
+    var corutineSCop= rememberCoroutineScope()
+
+    Column(modifier = Modifier.padding(5.dp).clip(RoundedCornerShape(15.dp))) {
+        TabRow(selectedTabIndex = tabIndex, containerColor = blueLight, contentColor = Color.White,
+                indicator = { position ->
+                    TabRowDefaults.SecondaryIndicator(
+                        modifier = Modifier.tabIndicatorOffset(position[tabIndex]),
+                        height = 4.dp, color = blueLight)
+                }){
+
+            //создание табов по списку
+            tabList.forEachIndexed { index, text ->
+                Tab(selected = false, onClick = {
+                    //анимация перелистывания
+                    corutineSCop.launch { pagerState.animateScrollToPage(index)
+
+                    }
+                },
+                    text={
+                        Text(text=text)
+                    })
+            }
+        }
+        HorizontalPager(
+            state = pagerState,
+            modifier = Modifier.weight(1.0f)
+        ) { index ->
+            LazyColumn(modifier = Modifier.fillMaxSize()) {
+                //заполнение элементами
+                items(count=15) {
+                    itemList()
+                }
+            }
+        }
+    }
+}
+
