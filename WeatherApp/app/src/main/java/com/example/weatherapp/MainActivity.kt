@@ -2,6 +2,8 @@ package com.example.weatherapp
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -34,6 +36,7 @@ import kotlinx.serialization.Contextual
 import com.android.volley.Request
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
+import com.example.weatherapp.data.WeatherModel
 import com.example.weatherapp.screen.MainCard
 import com.example.weatherapp.screen.tabLayout
 import org.json.JSONObject
@@ -45,6 +48,8 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             WeatherAppTheme {
+                var daysList=remember { mutableStateOf(listOf<WeatherModel>()) }
+                apiFun("Novosibirsk",this@MainActivity,daysList)
                 Image(
                     painter = painterResource(R.drawable.p2416),
                     contentDescription = "",
@@ -53,7 +58,7 @@ class MainActivity : ComponentActivity() {
                 )
                 Column(Modifier.padding(top = 25.dp)) {
                     MainCard()
-                    tabLayout()
+                    tabLayout(daysList)
                 }
                 //resultText("Novosibirsk",this@MainActivity)
                 //resultText("London",this@MainActivity)
@@ -103,6 +108,61 @@ class MainActivity : ComponentActivity() {
         queue.add(sR)
     }
 
-    //продвинутый дизайн
+
+
+
+    @Composable
+    private fun apiFun(city:String,context: Context,dlist: MutableState<List<WeatherModel>>){
+        //ссылка
+        val url = "https://api.weatherapi.com/v1/forecast.json" +
+                "?key=$apiKEY&" + //api ключ
+                "q=$city" + //город
+                "&days=8&" +
+                "aqi=no" +
+                "&alerts=no"
+        //volley - отправка результата на сервер
+        var queue= Volley.newRequestQueue(context)
+        //формирование запроса
+        var sR= StringRequest(Request.Method.GET,url,{response->
+            var list=getWeatherByDay(response)
+            dlist.value=list
+            Log.d("r",response)
+        },{error->
+            Log.d("r",error.message.toString())
+        })
+        queue.add(sR)
+    }
+    //функиця получения температуры через api по дням, возвращает список
+    private fun getWeatherByDay(response:String):List<WeatherModel>{
+        if(response.isEmpty()) return listOf()
+        var list= ArrayList<WeatherModel>()
+
+        //взятие элементов из json
+        var mainObj= JSONObject(response)
+        //по дням - forecast {forecastday[...]}
+        var days=mainObj.getJSONObject("forecast").getJSONArray("forecastday")
+        //город
+        var city=mainObj.getJSONObject("location").getString("name")
+        //цикл по  массиву  days
+        for(i in 0 until days.length()){
+            var item=days[i] as JSONObject
+            var it=item.getJSONObject("day")
+            list.add(
+                WeatherModel(city,
+                    item.getString("date"),
+                    item.getJSONArray("hour").toString(),
+                    "",
+                    it.getString("mintemp_c"),
+                    it.getString("maxtemp_c"),
+                    it.getJSONObject("condition").getString("text"),
+                    it.getJSONObject("condition").getString("icon")
+                )
+            )
+        }
+        //перезапись 1 элемента заполнением температуры
+        list[0]=list[0].copy(time = mainObj.getJSONObject("current").getString("last_updated"),
+            currentTemp = mainObj.getJSONObject("current").getString("temp_c"))
+        return list
+    }
 }
 

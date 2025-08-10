@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -26,6 +27,7 @@ import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,6 +44,7 @@ import androidx.compose.ui.unit.sp
 import com.example.weatherapp.R
 import com.example.weatherapp.ui.theme.blueLight
 import coil.compose.AsyncImage
+import com.example.weatherapp.data.WeatherModel
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -111,9 +114,9 @@ fun MainCard() {
     }
 }
 
-@Preview(showBackground = false)
+
 @Composable
-fun tabLayout(){
+fun tabLayout(dataList: MutableState<List<WeatherModel>>){
     //список с названиями
     var tabList=listOf("HOURS","DAYS")
     var pagerState = rememberPagerState { tabList.size }
@@ -147,9 +150,11 @@ fun tabLayout(){
         ) { index ->
             LazyColumn(modifier = Modifier.fillMaxSize()) {
                 //заполнение элементами
-                items(count=15) {
-                    itemList()
-                }
+//                items(count=15) {
+//                    itemList()
+//                }
+                //список с элементами, по дням или часам
+                itemsIndexed(dataList.value) {_,item-> itemList(item) }
             }
         }
     }

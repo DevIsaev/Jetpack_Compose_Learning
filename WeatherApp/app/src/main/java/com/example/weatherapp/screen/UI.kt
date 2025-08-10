@@ -19,22 +19,23 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.example.weatherapp.data.WeatherModel
 import com.example.weatherapp.ui.theme.blueLight
 
-@Preview(showBackground = false)
+
 @Composable
-fun itemList() {
+fun itemList(item: WeatherModel) {
     Card(modifier = Modifier.fillMaxWidth().padding(top=3.dp),
         colors = CardDefaults.cardColors(containerColor = blueLight),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp), shape = RoundedCornerShape(5.dp)
     ) {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
             Column(modifier = Modifier.padding(start = 8.dp, top = 5.dp, bottom = 5.dp)) {
-                Text("0:00", )
-                Text("Sunny",color = Color.White)
+                Text(item.time, )
+                Text(item.condition,color = Color.White)
             }
-            Text("23*C", color = Color.White,style = TextStyle(fontSize = 25.sp))
-            AsyncImage(model = "https://cdn.weatherapi.com/weather/64x64/day/116.png",contentDescription = "im2",  modifier = Modifier.size(35.dp).padding(end = 8.dp) )
+            Text(item.currentTemp.ifEmpty { "${item.max}/${item.min}" }, color = Color.White,style = TextStyle(fontSize = 25.sp))
+            AsyncImage(model = "https:${item.icon}",contentDescription = "im2",  modifier = Modifier.size(35.dp).padding(end = 8.dp) )
         }
     }
 }
