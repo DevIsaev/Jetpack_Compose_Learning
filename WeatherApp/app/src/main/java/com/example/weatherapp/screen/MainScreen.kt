@@ -46,6 +46,8 @@ import com.example.weatherapp.ui.theme.blueLight
 import coil.compose.AsyncImage
 import com.example.weatherapp.data.WeatherModel
 import kotlinx.coroutines.launch
+import org.json.JSONArray
+import org.json.JSONObject
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -85,7 +87,9 @@ fun MainCard(currentDay: MutableState<WeatherModel>) {
                         color = Color.White
                     )
                     Text(
-                        currentDay.value.currentTemp.toFloat().toInt().toString()+"℃",
+                        if(currentDay.value.currentTemp.isNotEmpty())
+                            currentDay.value.currentTemp.toFloat().toInt().toString()+"℃"
+                        else{"${currentDay.value.min.toFloat().toInt()}℃/${currentDay.value.max.toFloat().toInt()}℃"},
                         modifier = Modifier.padding(5.dp),
                         style = TextStyle(fontSize = 65.sp),
                         color = Color.White
@@ -116,7 +120,7 @@ fun MainCard(currentDay: MutableState<WeatherModel>) {
 
 
 @Composable
-fun tabLayout(dataList: MutableState<List<WeatherModel>>){
+fun tabLayout(dataList: MutableState<List<WeatherModel>>,currentDay: MutableState<WeatherModel>){
     //список с названиями
     var tabList=listOf("HOURS","DAYS")
     var pagerState = rememberPagerState { tabList.size }
@@ -148,15 +152,37 @@ fun tabLayout(dataList: MutableState<List<WeatherModel>>){
             state = pagerState,
             modifier = Modifier.weight(1.0f)
         ) { index ->
-            LazyColumn(modifier = Modifier.fillMaxSize()) {
-                //заполнение элементами
-//                items(count=15) {
-//                    itemList()
-//                }
-                //список с элементами, по дням или часам
-                itemsIndexed(dataList.value) {_,item-> itemList(item) }
+            var list=when(index){
+                0->getWeatherByHours(currentDay.value.hours)
+                1->dataList.value
+                else->dataList.value
             }
+            MainList(list,currentDay)
         }
     }
+}
+
+
+fun getWeatherByHours(hours: String):List<WeatherModel>{
+    if(hours.isEmpty()) return listOf()
+    var list= ArrayList<WeatherModel>()
+
+    var hoursArr= JSONArray(hours)
+    for(i in 0 until hoursArr.length()){
+        var item=hoursArr[i] as JSONObject
+        list.add(
+            WeatherModel("",
+                item.getString("time"),
+                "",
+                item.getString("temp_c").toFloat().toInt().toString()+"℃",
+                "",
+                "",
+                item.getJSONObject("condition").getString("text"),
+                item.getJSONObject("condition").getString("icon")
+            )
+        )
+    }
+
+    return  list
 }
 

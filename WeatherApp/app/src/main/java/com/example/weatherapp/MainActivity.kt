@@ -68,7 +68,7 @@ class MainActivity : ComponentActivity() {
                 )
                 Column(Modifier.padding(top = 25.dp)) {
                     MainCard(cardCurent)
-                    tabLayout(daysList)
+                    tabLayout(daysList,cardCurent)
                 }
                 //resultText("Novosibirsk",this@MainActivity)
                 //resultText("London",this@MainActivity)

@@ -1,16 +1,21 @@
 package com.example.weatherapp.screen
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -24,8 +29,25 @@ import com.example.weatherapp.ui.theme.blueLight
 
 
 @Composable
-fun itemList(item: WeatherModel) {
-    Card(modifier = Modifier.fillMaxWidth().padding(top=3.dp),
+fun MainList(list: List<WeatherModel>,currDays: MutableState<WeatherModel>){
+    LazyColumn(modifier = Modifier.fillMaxSize()) {
+        //заполнение элементами
+//                items(count=15) {
+//                    itemList()
+//                }
+        //список с элементами, по дням или часам
+        itemsIndexed(list) {_,item-> itemList(item,currDays) }
+    }
+}
+
+@Composable
+fun itemList(item: WeatherModel,currentDay: MutableState<WeatherModel>) {
+    Card(modifier = Modifier.fillMaxWidth().padding(top=3.dp).clickable{
+        if(item.hours.isEmpty()){
+            return@clickable
+        }
+        currentDay.value=item
+    },
         colors = CardDefaults.cardColors(containerColor = blueLight),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp), shape = RoundedCornerShape(5.dp)
     ) {
