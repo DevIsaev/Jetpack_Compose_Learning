@@ -49,7 +49,17 @@ class MainActivity : ComponentActivity() {
         setContent {
             WeatherAppTheme {
                 var daysList=remember { mutableStateOf(listOf<WeatherModel>()) }
-                apiFun("Novosibirsk",this@MainActivity,daysList)
+                var cardCurent=remember { mutableStateOf(WeatherModel("",
+                    "",
+                    "",
+                    "10.0",
+                    "10.0",
+                    "10.0",
+                    "",
+                    "")) }
+
+
+                apiFun("Novosibirsk",this@MainActivity,daysList,cardCurent)
                 Image(
                     painter = painterResource(R.drawable.p2416),
                     contentDescription = "",
@@ -57,7 +67,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize().alpha(0.6f)
                 )
                 Column(Modifier.padding(top = 25.dp)) {
-                    MainCard()
+                    MainCard(cardCurent)
                     tabLayout(daysList)
                 }
                 //resultText("Novosibirsk",this@MainActivity)
@@ -112,7 +122,7 @@ class MainActivity : ComponentActivity() {
 
 
     @Composable
-    private fun apiFun(city:String,context: Context,dlist: MutableState<List<WeatherModel>>){
+    private fun apiFun(city:String,context: Context,dlist: MutableState<List<WeatherModel>>,curentDay: MutableState<WeatherModel>){
         //ссылка
         val url = "https://api.weatherapi.com/v1/forecast.json" +
                 "?key=$apiKEY&" + //api ключ
@@ -125,6 +135,7 @@ class MainActivity : ComponentActivity() {
         //формирование запроса
         var sR= StringRequest(Request.Method.GET,url,{response->
             var list=getWeatherByDay(response)
+            curentDay.value=list[0]
             dlist.value=list
             Log.d("r",response)
         },{error->

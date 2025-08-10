@@ -50,9 +50,9 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 
-@Preview(showBackground = false)
+
 @Composable
-fun MainCard() {
+fun MainCard(currentDay: MutableState<WeatherModel>) {
     val currentDateTime = LocalDateTime.now()
     Column(Modifier.padding(15.dp)) {
         Card(
@@ -75,23 +75,23 @@ fun MainCard() {
                         style = TextStyle(fontSize = 15.sp),
                         color = Color.White
                     )
-                    AsyncImage(model = "https://cdn.weatherapi.com/weather/64x64/day/116.png",
+                    AsyncImage(model = "https:${currentDay.value.icon}",
                         contentDescription = "im2",  modifier = Modifier.size(35.dp).padding(top = 3.dp, end = 8.dp))
                 }
                 Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
                     Text(
-                        "Madrid",
+                        currentDay.value.city,
                         style = TextStyle(fontSize = 25.sp),
                         color = Color.White
                     )
                     Text(
-                        "23*C",
+                        currentDay.value.currentTemp.toFloat().toInt().toString()+"℃",
                         modifier = Modifier.padding(5.dp),
                         style = TextStyle(fontSize = 65.sp),
                         color = Color.White
                     )
                     Text(
-                        "Cloudy",
+                        currentDay.value.condition,
                         style = TextStyle(fontSize = 15.sp),
                         color = Color.White
                     )
@@ -101,7 +101,7 @@ fun MainCard() {
                         IconButton(onClick = {}){ Icon(painter = painterResource(R.drawable.search), contentDescription = "",tint = Color.White) }
 
                         Text(
-                            "27*/9*",
+                            "${currentDay.value.min.toFloat().toInt()}℃/${currentDay.value.max.toFloat().toInt()}℃",
                             style = TextStyle(fontSize = 10.sp),
                             color = Color.White
                         )
