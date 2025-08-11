@@ -38,6 +38,7 @@ import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.example.weatherapp.data.WeatherModel
 import com.example.weatherapp.screen.MainCard
+import com.example.weatherapp.screen.SearchDialog
 import com.example.weatherapp.screen.tabLayout
 import org.json.JSONObject
 const val apiKEY="5b97c6dd45614d44b00152855250508"
@@ -49,7 +50,12 @@ class MainActivity : ComponentActivity() {
         setContent {
             WeatherAppTheme {
                 var daysList=remember { mutableStateOf(listOf<WeatherModel>()) }
-                var cardCurent=remember { mutableStateOf(WeatherModel("",
+                var dialogState=remember { mutableStateOf(false) }
+                var city=remember { mutableStateOf("Novosibirsk") }
+                if(dialogState.value){
+                   SearchDialog(dialogState,{city.value=it})
+                }
+                var cardCurent=remember { mutableStateOf(WeatherModel(city.value,
                     "",
                     "",
                     "10.0",
@@ -59,7 +65,7 @@ class MainActivity : ComponentActivity() {
                     "")) }
 
 
-                apiFun("Novosibirsk",this@MainActivity,daysList,cardCurent)
+                apiFun(city.value,this@MainActivity,daysList,cardCurent)
                 Image(
                     painter = painterResource(R.drawable.p2416),
                     contentDescription = "",
@@ -67,7 +73,11 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize().alpha(0.6f)
                 )
                 Column(Modifier.padding(top = 25.dp)) {
-                    MainCard(cardCurent)
+                    MainCard(cardCurent,{
+                        apiFun("Novosibirsk",this@MainActivity,daysList,cardCurent)
+                    },{
+                        dialogState.value=true
+                    })
                     tabLayout(daysList,cardCurent)
                 }
                 //resultText("Novosibirsk",this@MainActivity)
@@ -121,7 +131,6 @@ class MainActivity : ComponentActivity() {
 
 
 
-    @Composable
     private fun apiFun(city:String,context: Context,dlist: MutableState<List<WeatherModel>>,curentDay: MutableState<WeatherModel>){
         //ссылка
         val url = "https://api.weatherapi.com/v1/forecast.json" +

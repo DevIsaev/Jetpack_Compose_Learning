@@ -54,7 +54,7 @@ import java.time.format.DateTimeFormatter
 
 
 @Composable
-fun MainCard(currentDay: MutableState<WeatherModel>) {
+fun MainCard(currentDay: MutableState<WeatherModel>,onClickSync: ()-> Unit,onClickSearch: ()-> Unit) {
     val currentDateTime = LocalDateTime.now()
     Column(Modifier.padding(15.dp)) {
         Card(
@@ -102,7 +102,9 @@ fun MainCard(currentDay: MutableState<WeatherModel>) {
 
 
                     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween){
-                        IconButton(onClick = {}){ Icon(painter = painterResource(R.drawable.search), contentDescription = "",tint = Color.White) }
+                        IconButton(onClick = {
+                            onClickSearch.invoke()
+                        }){ Icon(painter = painterResource(R.drawable.search), contentDescription = "",tint = Color.White) }
 
                         Text(
                             "${currentDay.value.min.toFloat().toInt()}℃/${currentDay.value.max.toFloat().toInt()}℃",
@@ -110,7 +112,9 @@ fun MainCard(currentDay: MutableState<WeatherModel>) {
                             color = Color.White
                         )
 
-                        IconButton(onClick = {}){ Icon(painter = painterResource(R.drawable.sync), contentDescription = "", tint = Color.White) }
+                        IconButton(onClick = {
+                            onClickSync.invoke()
+                        }){ Icon(painter = painterResource(R.drawable.sync), contentDescription = "", tint = Color.White) }
                     }
                 }
             }
