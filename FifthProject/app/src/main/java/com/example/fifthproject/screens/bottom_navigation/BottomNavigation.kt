@@ -1,6 +1,8 @@
 package com.example.fifthproject.screens.bottom_navigation
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -14,7 +16,47 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.example.fifthproject.R
+
+
+//класс элемента у bottom navigation
+sealed class BottomItem(var title:String,var icon:Int,var route: String) {
+
+    object Screen1: BottomItem("все композиции",R.drawable.list,"экран1")
+    object Screen2: BottomItem("избранные",R.drawable.fav,"экран2")
+    object Screen3: BottomItem("главный экран",R.drawable.base,"экран3")
+    object Screen4: BottomItem("плейлисты",R.drawable.playlist,"экран4")
+}
+
+@Composable
+fun Screen(title: String) {
+    Text("это экран ${title}", Modifier.fillMaxSize().wrapContentHeight(), textAlign = TextAlign.Center)
+}
+
+//для отображения экрана
+@Composable
+fun NavGraph(navHostController: NavHostController) {
+    //контроллер переключения и экран по умолчанию
+    NavHost(navHostController, startDestination = "экран2"){
+        composable("экран1"){
+            Screen("все композиции")
+        }
+        composable("экран2"){
+            Screen("избранные")
+        }
+        composable("экран3"){
+            Screen("главный экран")
+        }
+        composable("экран4"){
+            Screen("плейлисты")
+        }
+
+    }
+}
 
 @Composable
 fun BottomNav(navController: NavController) {
