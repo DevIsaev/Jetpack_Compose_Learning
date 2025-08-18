@@ -8,15 +8,23 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
 import com.example.fifthproject.TopAppBar.topAppBar
 import com.example.fifthproject.screens.bottom_navigation.BottomNav
@@ -25,18 +33,25 @@ import com.example.fifthproject.ui.theme.FifthProjectTheme
 
 
 class MainActivity : ComponentActivity() {
-    @OptIn(ExperimentalMaterial3Api::class)
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             FifthProjectTheme {
-                var navController = rememberNavController()
+                // SnackbarHostState вместо ScaffoldState
+                val snackbarHostState = remember { SnackbarHostState() }
+                val navController = rememberNavController()
+                val coroutineScope = rememberCoroutineScope()
+
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
                     bottomBar = { BottomNav(navController) },
-                    topBar = { topAppBar(this) }
+                    topBar = { topAppBar(this,coroutineScope, snackbarHostState) },
+                    snackbarHost = { SnackbarHost(snackbarHostState){data->
+                        Snackbar(data,  containerColor = Color.Blue, shape = RoundedCornerShape(20.dp), modifier = Modifier.padding(bottom = 25.dp))
+                    } }
                 ) {
                     NavGraph(navController)
                 }
