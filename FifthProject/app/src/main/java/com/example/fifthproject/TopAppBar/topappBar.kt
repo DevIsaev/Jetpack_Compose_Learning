@@ -7,6 +7,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material3.DrawerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -28,7 +29,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun topAppBar(context: Context,
               coroutineScope: CoroutineScope, // Принимаем scope как параметр
-              snackbarHostState: SnackbarHostState // Принимаем состояние снэкбара
+              snackbarHostState: SnackbarHostState, // Принимаем состояние снэкбара
+              drawerState: DrawerState
 ) {
     TopAppBar(
         title = { Text("TopAppBar") },
@@ -38,7 +40,9 @@ fun topAppBar(context: Context,
         ),
         navigationIcon = {
             IconButton(onClick = {
-                Toast.makeText(context, "Menu", Toast.LENGTH_SHORT).show()
+                    coroutineScope.launch {
+                        drawerState.open()
+                    }
             }) {
                 Icon(
                     imageVector = Icons.Filled.Menu,
