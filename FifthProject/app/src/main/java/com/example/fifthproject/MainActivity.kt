@@ -59,7 +59,7 @@ class MainActivity : ComponentActivity() {
                         // Содержимое вашего Drawer
                         Column(Modifier.padding(end=30.dp)) {
                             DrawerNavigation(c)
-                            DrawerBody()
+                            DrawerBody(navController)
                         }
                     }
                 ) {

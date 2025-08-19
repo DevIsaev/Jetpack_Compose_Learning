@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.fifthproject.MainActivity
 
 @Composable
@@ -27,12 +28,24 @@ fun DrawerNavigation(c: Color) {
 }
 
 @Composable
-fun DrawerBody(){
-    LazyColumn(Modifier.fillMaxWidth().background(Color.LightGray),) {
-        items(10){
-            Text("item ${it+1}", Modifier.fillMaxWidth().clickable{
-                
-            }.padding(20.dp))
+fun DrawerBody(navController: NavController){
+
+    Column(Modifier.fillMaxWidth().background(Color.LightGray),) {
+        Text("экран1", Modifier.fillMaxWidth().clickable {
+            navController.navigate("экран1")
+        }.padding(20.dp))
+        Text("экран2", Modifier.fillMaxWidth().clickable {
+            navController.navigate("экран2")
+        }.padding(20.dp))
+        Text("экран3", Modifier.fillMaxWidth().clickable {
+            navController.navigate("экран3")
+        }.padding(20.dp))
+        LazyColumn(Modifier.fillMaxWidth().background(Color.LightGray),) {
+            items(10) {
+                Text("item ${it + 1}", Modifier.fillMaxWidth().clickable {
+
+                }.padding(20.dp))
+            }
         }
     }
 }
