@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Button
+import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalDrawerSheet
@@ -24,43 +25,66 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.compose.currentBackStackEntryAsState
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
-fun Drawer() {
-var items=listOf(DrawerItem(R.drawable.mess,"Message"),DrawerItem(R.drawable.loc,"Location"),DrawerItem(R.drawable.pass,"Pass"))
+fun Drawer(
+    navController: NavController,
+    drawerState: DrawerState,
+    coroutineScope: CoroutineScope,
+    content: @Composable () -> Unit
+) {
+    val items = listOf(
+        DrawerItem(R.drawable.mess, "Message", "screen1"),
+        DrawerItem(R.drawable.loc, "Location", "screen2"),
+        DrawerItem(R.drawable.pass, "Pass", "screen3")
+    )
 
-    var drawerState= rememberDrawerState(initialValue = DrawerValue.Closed)
-    var coroutineScope= rememberCoroutineScope()
-    var selectedItem=remember { mutableStateOf(items[0]) }
-    ModalNavigationDrawer(drawerState = drawerState, drawerContent ={
-        ModalDrawerSheet {
-            //header
-            Image(painterResource(R.drawable.background),"", Modifier.fillMaxWidth().height(70.dp), contentScale = ContentScale.Crop)
-            Spacer(Modifier.height(15.dp))
-            //items
-            items.forEach { item ->
-                NavigationDrawerItem({
-                    Text(item.title)
-                }, icon = {
-                    Icon(painterResource(item.img),"")
-                }, selected = selectedItem.value==item, onClick = {
-                    coroutineScope.launch {
-                        selectedItem.value=item
-                        drawerState.close()
-                    }
-                })
+    val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
+
+    ModalNavigationDrawer(
+        drawerState = drawerState,
+        drawerContent = {
+            ModalDrawerSheet {
+                Image(
+                    painterResource(R.drawable.background),
+                    "",
+                    Modifier.fillMaxWidth().height(70.dp),
+                    contentScale = ContentScale.Crop
+                )
+                Spacer(Modifier.height(15.dp))
+
+                items.forEach { item ->
+                    NavigationDrawerItem(
+                        label = { Text(item.title) },
+                        icon = { Icon(painterResource(item.img), "") },
+                        selected = currentRoute == item.route,
+                        onClick = {
+                            coroutineScope.launch {
+                                drawerState.close()
+                                // Навигация к выбранному экрану
+                                navController.navigate(item.route) {
+                                    // Очистка стека навигации до корневого элемента
+                                    popUpTo(navController.graph.findStartDestination().id) {
+                                        saveState = true
+                                    }
+                                    // Запуск одного экземпляра destination
+                                    launchSingleTop = true
+                                    // Восстановление состояния при повторной навигации
+                                    restoreState = true
+                                }
+                            }
+                        }
+                    )
+                }
             }
-        }
-    }, content = {
-        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
-            Button(onClick = {
-                coroutineScope.launch { drawerState.open() }
-            }) {
-                Text("drawer")
-            }
-        }
-    } )
+        },
+        content = content
+    )
 }
 
-data class DrawerItem(var img: Int,var title: String)
+data class DrawerItem(val img: Int, val title: String, val route: String)
