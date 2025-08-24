@@ -50,6 +50,10 @@ import co.yml.charts.ui.linechart.model.LineStyle
 import co.yml.charts.ui.linechart.model.SelectionHighlightPoint
 import co.yml.charts.ui.linechart.model.SelectionHighlightPopUp
 import co.yml.charts.ui.linechart.model.ShadowUnderLine
+import com.example.graphs.Graphs.BarChartGraph
+import com.example.graphs.Graphs.GroupedBarChart
+import com.example.graphs.Graphs.PieChartGraph
+import com.example.graphs.Graphs.SingleLineGraph
 import com.example.graphs.ui.theme.GraphsTheme
 import kotlin.random.Random
 
@@ -64,143 +68,13 @@ class MainActivity : ComponentActivity() {
                     SingleLineGraph()
                     Text("BarChartGraph", textAlign = TextAlign.Center, fontSize=25.sp)
                     BarChartGraph()
+                    Text("GroupedBarChartGraph", textAlign = TextAlign.Center, fontSize=25.sp)
+                    GroupedBarChart()
+                    Text("PieChartGraph", textAlign = TextAlign.Center, fontSize=25.sp)
+                    PieChartGraph(this@MainActivity)
                 }
             }
         }
-    }
-    @Composable
-    fun getPoint(): ArrayList<co.yml.charts.common.model.Point> {
-        var listP= ArrayList<co.yml.charts.common.model.Point>()
-        //за месяц
-        for (i in 0..31){
-            listP.add(co.yml.charts.common.model.Point(i.toFloat(), Random.nextInt(50,130).toFloat(),""))
-        }
-        return listP
-    }
-    @Composable
-    fun getMax(list: List<co.yml.charts.common.model.Point>):Float {
-        var max = 0F
-        list.forEach { point ->
-            if (max < point.y) {
-                max = point.y
-            }
-        }
-        return max
-    }
-    @Composable
-    fun getMin(list: List<co.yml.charts.common.model.Point>):Float {
-        var min = 140F
-        list.forEach { point ->
-            if (min > point.y) {
-                min = point.y
-            }
-        }
-        return min
-    }
-    @Composable
-    fun SingleLineGraph(){
-        var steps=10
-        var pointsList: List<co.yml.charts.common.model.Point> =getPoint()
-        var max=getMax(pointsList)
-        var min=getMin(pointsList)
-        val xAxisData = AxisData.Builder()
-            //расстояние
-            .axisStepSize(100.dp)
-            //задний фон
-            .backgroundColor(Color.Blue)
-            //счетчик, выполняемые шаги
-            .steps(pointsList.size - 1)
-            //текст
-            .labelData { i -> i.toString()+"д" }
-            .labelAndAxisLinePadding(15.dp)
-            .build()
-
-        val yAxisData = AxisData.Builder()
-            //шаги
-            .steps(steps)
-            //задний фон
-            .backgroundColor(Color.Red)
-            //расстояние
-            .labelAndAxisLinePadding(20.dp)
-            //текст
-            .labelData { i ->
-                var yScale=(max-min)/steps.toFloat()
-                ((i*yScale)+min).toInt().toString()
-            }.build()
-
-
-        val lineChartData = LineChartData(
-            linePlotData = LinePlotData(
-                lines = listOf(
-                    Line(
-                        dataPoints = pointsList,
-                        LineStyle(color = Color.DarkGray, width = 1.0f,),
-                        IntersectionPoint(color=Color.Gray, radius = 2.dp),
-                        SelectionHighlightPoint(color = Color.Cyan, radius = 5.dp),
-                        ShadowUnderLine(),
-                        SelectionHighlightPopUp()
-                    )
-                ),
-            ),
-            xAxisData = xAxisData,
-            yAxisData = yAxisData,
-            gridLines = GridLines(),
-            backgroundColor = Color.White
-        )
-
-        LineChart(modifier = Modifier.fillMaxWidth().height(300.dp), lineChartData = lineChartData)
-    }
-
-
-    object DataUtils {
-        fun getBarChartData(size: Int, maxRange: Int): List<BarData> {
-            return List(size) { index ->
-                val value = Random.nextFloat() * maxRange
-                BarData(
-                    point = co.yml.charts.common.model.Point(index.toFloat(), value),
-                    color = Color(0xFFE91E63),
-                    label = "${index + 1}д",
-                    dataCategoryOptions = DataCategoryOptions(),
-                    description = "Value of bar Item ${index + 1} is value ${String.format("%.2f", value)}"
-                )
-            }
-        }
-    }
-    @Composable
-    fun BarChartGraph() {
-        val barChartListSize = 31// Количество столбцов
-        val maxRange = 100 // Максимальное значение
-        val yStepSize = 10 // Количество шагов на оси Y
-
-        val barDataList = DataUtils.getBarChartData(barChartListSize, maxRange)
-
-        val xAxisData = AxisData.Builder()
-            .axisStepSize(30.dp)
-            .steps(barDataList.size - 1)
-            .bottomPadding(40.dp)
-            .backgroundColor(Color.LightGray)
-            .axisLabelAngle(20f)
-            .labelData { index -> barDataList[index].label }
-            .build()
-
-        val yAxisData = AxisData.Builder()
-            .steps(yStepSize)
-            .labelAndAxisLinePadding(20.dp)
-            .backgroundColor(Color.Yellow)
-            .axisOffset(20.dp)
-            .labelData { index -> (index * (maxRange / yStepSize)).toString() }
-            .build()
-
-        val barChartData = BarChartData(
-            chartData = barDataList,
-            xAxisData = xAxisData,
-            yAxisData = yAxisData,
-        )
-
-        BarChart(
-            modifier = Modifier.height(350.dp),
-            barChartData = barChartData
-        )
     }
 }
 
