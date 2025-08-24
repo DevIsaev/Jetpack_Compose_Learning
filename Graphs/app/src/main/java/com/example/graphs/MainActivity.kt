@@ -7,8 +7,11 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -19,12 +22,24 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import co.yml.charts.axis.AxisData
+import co.yml.charts.axis.DataCategoryOptions
+import co.yml.charts.common.utils.DataUtils
+import co.yml.charts.ui.barchart.BarChart
+import co.yml.charts.ui.barchart.models.BarChartData
+import co.yml.charts.ui.barchart.models.BarData
 import co.yml.charts.ui.linechart.LineChart
 import co.yml.charts.ui.linechart.model.GridLines
 import co.yml.charts.ui.linechart.model.IntersectionPoint
@@ -44,11 +59,16 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             GraphsTheme {
-                SingleLineGraph(this)
+                Column(Modifier.verticalScroll(rememberScrollState()).padding(top=25.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text("SingleLineGraph", textAlign = TextAlign.Center, fontSize=25.sp)
+                    SingleLineGraph()
+                    Text("BarChartGraph", textAlign = TextAlign.Center, fontSize=25.sp)
+                    BarChartGraph()
+                }
             }
         }
     }
-
+    @Composable
     fun getPoint(): ArrayList<co.yml.charts.common.model.Point> {
         var listP= ArrayList<co.yml.charts.common.model.Point>()
         //за месяц
@@ -57,7 +77,6 @@ class MainActivity : ComponentActivity() {
         }
         return listP
     }
-
     @Composable
     fun getMax(list: List<co.yml.charts.common.model.Point>):Float {
         var max = 0F
@@ -78,14 +97,12 @@ class MainActivity : ComponentActivity() {
         }
         return min
     }
-
     @Composable
-    fun SingleLineGraph(context: Context){
+    fun SingleLineGraph(){
         var steps=10
         var pointsList: List<co.yml.charts.common.model.Point> =getPoint()
         var max=getMax(pointsList)
         var min=getMin(pointsList)
-        Toast.makeText(context,max.toString()+"/"+min.toString(), Toast.LENGTH_LONG).show()
         val xAxisData = AxisData.Builder()
             //расстояние
             .axisStepSize(100.dp)
@@ -107,7 +124,6 @@ class MainActivity : ComponentActivity() {
             .labelAndAxisLinePadding(20.dp)
             //текст
             .labelData { i ->
-
                 var yScale=(max-min)/steps.toFloat()
                 ((i*yScale)+min).toInt().toString()
             }.build()
@@ -135,5 +151,56 @@ class MainActivity : ComponentActivity() {
         LineChart(modifier = Modifier.fillMaxWidth().height(300.dp), lineChartData = lineChartData)
     }
 
+
+    object DataUtils {
+        fun getBarChartData(size: Int, maxRange: Int): List<BarData> {
+            return List(size) { index ->
+                val value = Random.nextFloat() * maxRange
+                BarData(
+                    point = co.yml.charts.common.model.Point(index.toFloat(), value),
+                    color = Color(0xFFE91E63),
+                    label = "${index + 1}д",
+                    dataCategoryOptions = DataCategoryOptions(),
+                    description = "Value of bar Item ${index + 1} is value ${String.format("%.2f", value)}"
+                )
+            }
+        }
+    }
+    @Composable
+    fun BarChartGraph() {
+        val barChartListSize = 31// Количество столбцов
+        val maxRange = 100 // Максимальное значение
+        val yStepSize = 10 // Количество шагов на оси Y
+
+        val barDataList = DataUtils.getBarChartData(barChartListSize, maxRange)
+
+        val xAxisData = AxisData.Builder()
+            .axisStepSize(30.dp)
+            .steps(barDataList.size - 1)
+            .bottomPadding(40.dp)
+            .backgroundColor(Color.LightGray)
+            .axisLabelAngle(20f)
+            .labelData { index -> barDataList[index].label }
+            .build()
+
+        val yAxisData = AxisData.Builder()
+            .steps(yStepSize)
+            .labelAndAxisLinePadding(20.dp)
+            .backgroundColor(Color.Yellow)
+            .axisOffset(20.dp)
+            .labelData { index -> (index * (maxRange / yStepSize)).toString() }
+            .build()
+
+        val barChartData = BarChartData(
+            chartData = barDataList,
+            xAxisData = xAxisData,
+            yAxisData = yAxisData,
+        )
+
+        BarChart(
+            modifier = Modifier.height(350.dp),
+            barChartData = barChartData
+        )
+    }
 }
 
