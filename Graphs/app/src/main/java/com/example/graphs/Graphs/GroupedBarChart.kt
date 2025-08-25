@@ -75,7 +75,7 @@ fun GroupedBarChart() {
     val barChartListSize = 4 // Количество групп
     val maxRange = 100 // Максимальное значение
     val yStepSize = 5 // Количество шагов на оси Y
-    val eachGroupBarSize = 3 // Количество столбцов в каждой группе
+    val eachGroupBarSize = 5 // Количество столбцов в каждой группе
 
     val groupBarData = DataUtiles.getGroupBarChartData(
         barChartListSize,
@@ -92,6 +92,7 @@ fun GroupedBarChart() {
         .axisStepSize(30.dp)
         .steps(groupBarData.size - 1)
         .bottomPadding(40.dp)
+        .backgroundColor(Color.White)
         .labelData { index -> groupBarData[index].label }
         .build()
 
@@ -99,13 +100,16 @@ fun GroupedBarChart() {
         .steps(yStepSize)
         .labelAndAxisLinePadding(20.dp)
         .axisOffset(20.dp)
+        .backgroundColor(Color.Magenta)
         .labelData { index -> (index * (maxRange / yStepSize)).toString() }
         .build()
 
     val groupBarChartData = GroupBarChartData(
         barPlotData = groupBarPlotData,
         xAxisData = xAxisData,
-        yAxisData = yAxisData
+        yAxisData = yAxisData,
+        backgroundColor = Color.Gray,
+
     )
 
     GroupBarChart(

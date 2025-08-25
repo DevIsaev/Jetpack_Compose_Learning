@@ -51,6 +51,8 @@ import co.yml.charts.ui.linechart.model.SelectionHighlightPoint
 import co.yml.charts.ui.linechart.model.SelectionHighlightPopUp
 import co.yml.charts.ui.linechart.model.ShadowUnderLine
 import com.example.graphs.Graphs.BarChartGraph
+import com.example.graphs.Graphs.CombinedChartGraph
+import com.example.graphs.Graphs.DonutChartGraph
 import com.example.graphs.Graphs.GroupedBarChart
 import com.example.graphs.Graphs.PieChartGraph
 import com.example.graphs.Graphs.SingleLineGraph
@@ -72,6 +74,10 @@ class MainActivity : ComponentActivity() {
                     GroupedBarChart()
                     Text("PieChartGraph", textAlign = TextAlign.Center, fontSize=25.sp)
                     PieChartGraph(this@MainActivity)
+                    Text("DonutChartGraph", textAlign = TextAlign.Center, fontSize=25.sp)
+                    DonutChartGraph()
+                    Text("CombinedChartGraph", textAlign = TextAlign.Center, fontSize=25.sp)
+                    CombinedChartGraph()
                 }
             }
         }

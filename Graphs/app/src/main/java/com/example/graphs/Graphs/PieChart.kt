@@ -26,7 +26,8 @@ fun PieChartGraph(context: Context){
     )
     val pieChartConfig = PieChartConfig(
         isAnimationEnable = true,
-        showSliceLabels = false,
+        showSliceLabels =true,
+        labelVisible = true,
         animationDuration = 1500,
     )
 
