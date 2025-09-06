@@ -46,9 +46,8 @@ const val apiKEY="5b97c6dd45614d44b00152855250508"
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+
         setContent {
-            WeatherAppTheme {
                 var daysList=remember { mutableStateOf(listOf<WeatherModel>()) }
                 var dialogState=remember { mutableStateOf(false) }
                 var city=remember { mutableStateOf("Novosibirsk") }
@@ -83,7 +82,6 @@ class MainActivity : ComponentActivity() {
                 //resultText("Novosibirsk",this@MainActivity)
                 //resultText("London",this@MainActivity)
                 //resultText("Tokio",this@MainActivity)
-            }
         }
     }
 
